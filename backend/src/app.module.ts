@@ -11,16 +11,22 @@ import { MedidorEntity } from './medidores/medidor.entity';
 import { LeituraEntity } from './leituras/leitura.entity';
 
 @Module({
-  imports: [ImoveisModule, MedidoresModule, LeiturasModule, ConsumoModule, TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: '',
-    database: 'telemetria',
-    entities: [ImovelEntity, MedidorEntity, LeituraEntity],
-    synchronize: true,
-  })],
+  imports: [
+    ImoveisModule,
+    MedidoresModule,
+    LeiturasModule,
+    ConsumoModule,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 3306,
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASS ?? '',
+      database: process.env.DB_NAME || 'telemetria',
+      entities: [ImovelEntity, MedidorEntity, LeituraEntity],
+      synchronize: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

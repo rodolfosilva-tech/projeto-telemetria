@@ -14,7 +14,9 @@ services:
       - db_data:/var/lib/mysql
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-dev
     container_name: telemetria-backend
     restart: always
     ports:
@@ -27,15 +29,23 @@ services:
       DB_NAME: telemetria
     depends_on:
       - mysql
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile-dev
     container_name: telemetria-frontend
     restart: always
     ports:
-      - '4200:80'
+      - '4200:4200'
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 volumes:
   db_data:

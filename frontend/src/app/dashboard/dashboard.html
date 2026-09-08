@@ -1,1 +1,21 @@
-<p>Dashboard works!</p>
+<h3>Consumo por Ano</h3>
+
+<ngx-charts-bar-vertical [results]="dadosAno" (select)="aoClicarAno($event)">
+</ngx-charts-bar-vertical>
+
+
+@if (dadosMes.length) {
+<h3>Consumo por Mês — {{ anoSelecionado }}</h3>
+
+<ngx-charts-bar-vertical [results]="dadosMes" (select)="aoClicarMes($event)">
+</ngx-charts-bar-vertical>
+
+}
+
+@if (dadosDia.length) {
+<h3>Consumo por Dia — {{ mesSelecionado }}/{{ anoSelecionado }}</h3>
+
+<ngx-charts-bar-vertical [results]="dadosDia">
+</ngx-charts-bar-vertical>
+
+}

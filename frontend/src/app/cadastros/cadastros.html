@@ -1,0 +1,46 @@
+<div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2>Cadastros Básicos</h2>
+
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+        <h3>1. Novo Imóvel</h3>
+        <form [formGroup]="imovelForm" (ngSubmit)="salvarImovel()">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Nome do Condomínio/Imóvel:</label>
+                <input formControlName="nome" type="text" style="width: 100%; padding: 8px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Endereço:</label>
+                <input formControlName="endereco" type="text" style="width: 100%; padding: 8px;">
+            </div>
+            <button type="submit" [disabled]="imovelForm.invalid" style="padding: 10px 20px; cursor: pointer;">Salvar
+                Imóvel</button>
+        </form>
+    </div>
+
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px;">
+        <h3>2. Novo Medidor</h3>
+        <form [formGroup]="medidorForm" (ngSubmit)="salvarMedidor()">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Vincular ao Imóvel:</label>
+                <select formControlName="imovelId" style="width: 100%; padding: 8px;">
+                    <option value="" disabled selected>Selecione...</option>
+                    <option *ngFor="let imovel of imoveis" [value]="imovel.id">{{ imovel.nome }}</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Nº de Série:</label>
+                <input formControlName="identificador" type="text" style="width: 100%; padding: 8px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Tipo:</label>
+                <select formControlName="tipo" style="width: 100%; padding: 8px;">
+                    <option value="AGUA">Água</option>
+                    <option value="ENERGIA">Energia</option>
+                    <option value="GAS">Gás</option>
+                </select>
+            </div>
+            <button type="submit" [disabled]="medidorForm.invalid" style="padding: 10px 20px; cursor: pointer;">Salvar
+                Medidor</button>
+        </form>
+    </div>
+</div>

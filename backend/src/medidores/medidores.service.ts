@@ -3,18 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MedidorEntity, TipoMedidor } from './medidor.entity';
 import { ImovelEntity } from '../imoveis/imovel.entity';
-
-export class CreateMedidorDto {
-  identificador: string;
-  tipo?: TipoMedidor;
-  imovelId: string;
-}
-
-export class UpdateMedidorDto {
-  identificador?: string;
-  tipo?: TipoMedidor;
-  imovelId?: string;
-}
+import { CreateMedidorDto } from './dto/create-medidor.dto';
+import { UpdateMedidorDto } from './dto/update-medidor.dto';
 
 @Injectable()
 export class MedidoresService {
@@ -23,7 +13,7 @@ export class MedidoresService {
     private medidorRepo: Repository<MedidorEntity>,
     @InjectRepository(ImovelEntity)
     private imovelRepo: Repository<ImovelEntity>,
-  ) {}
+  ) { }
 
   async create(data: CreateMedidorDto) {
     const imovel = await this.imovelRepo.findOne({ where: { id: data.imovelId } });

@@ -2,23 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ImovelEntity } from './imovel.entity';
-
-export class CreateImovelDto {
-  nome: string;
-  endereco: string;
-}
-
-export class UpdateImovelDto {
-  nome?: string;
-  endereco?: string;
-}
+import { CreateImovelDto } from './dto/create-imovel.dto';
+import { UpdateImovelDto } from './dto/update-imovel.dto';
 
 @Injectable()
 export class ImoveisService {
   constructor(
     @InjectRepository(ImovelEntity)
     private imovelRepo: Repository<ImovelEntity>,
-  ) {}
+  ) { }
 
   create(data: CreateImovelDto) {
     const imovel = this.imovelRepo.create(data);

@@ -1,9 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
-import { MedidoresService, CreateMedidorDto, UpdateMedidorDto } from './medidores.service';
+import { MedidoresService } from './medidores.service';
+import { CreateMedidorDto } from './dto/create-medidor.dto';
+import { UpdateMedidorDto } from './dto/update-medidor.dto';
 
 @Controller('medidores')
 export class MedidoresController {
-  constructor(private readonly medidoresService: MedidoresService) {}
+  constructor(private readonly medidoresService: MedidoresService) { }
 
   @Post()
   create(@Body() dto: CreateMedidorDto) {

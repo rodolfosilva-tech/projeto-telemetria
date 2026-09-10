@@ -1,14 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Dashboard } from './dashboard/dashboard';
-import { Imoveis } from './imoveis/imoveis';
 
 @Component({
-  imports: [RouterOutlet, Dashboard, Imoveis],
   selector: 'app-root',
-  styleUrl: './app.css',
-  templateUrl: './app.html',
+  standalone: true,
+  imports: [RouterOutlet],
+  templateUrl: './app.html'
 })
-export class App {
-  protected readonly title = signal('frontend');
+export class App { // <-- O segredo estava apenas no nome desta classe!
+  title = 'telemetria-frontend';
 }

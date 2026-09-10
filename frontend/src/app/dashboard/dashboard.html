@@ -1,21 +1,66 @@
-<h3>Consumo por Ano</h3>
+<div style="padding: 20px; font-family: sans-serif; max-width: 1000px; margin: 0 auto;">
+    <h2>Dashboard de Telemetria</h2>
 
-<ngx-charts-bar-vertical [results]="dadosAno" (select)="aoClicarAno($event)">
-</ngx-charts-bar-vertical>
+    <div style="margin-bottom: 20px;">
+        <a href="/cadastros" style="margin-right: 15px; color: #0056b3;">+ Cadastrar Imóveis/Medidores</a>
+        <a href="/leituras" style="color: #0056b3;">+ Lançar Leituras</a>
+    </div>
 
+    <div style="display: flex; gap: 20px;">
 
-@if (dadosMes.length) {
-<h3>Consumo por Mês — {{ anoSelecionado }}</h3>
+        <!-- LADO ESQUERDO: Listagem de Imóveis e Medidores -->
+        <div style="flex: 1; border: 1px solid #ccc; border-radius: 8px; padding: 15px;">
+            <h3>Imóveis e Medidores</h3>
+            <p style="font-size: 14px; color: #666;">Clique em um medidor para ver o consumo:</p>
 
-<ngx-charts-bar-vertical [results]="dadosMes" (select)="aoClicarMes($event)">
-</ngx-charts-bar-vertical>
+            <ul style="list-style: none; padding: 0;">
+                @for (imovel of imoveis; track imovel.id) {
+                <li style="margin-bottom: 15px;">
+                    <strong>{{ imovel.nome }}</strong>
 
-}
+                    <ul style="margin-top: 5px; padding-left: 20px;">
+                        <!-- Itera direto no array de medidores do próprio imóvel -->
+                        @for (medidor of imovel.medidores; track medidor.id) {
+                        <li (click)="selecionarMedidor(medidor)"
+                            style="cursor: pointer; color: #0056b3; margin-bottom: 5px;">
+                            &#128269; {{ medidor.identificador }} ({{ medidor.tipo }})
+                        </li>
+                        } @empty {
+                        <li style="color: #999; font-size: 12px;">Nenhum medidor cadastrado</li>
+                        }
+                    </ul>
+                </li>
+                }
+            </ul>
+        </div>
 
-@if (dadosDia.length) {
-<h3>Consumo por Dia — {{ mesSelecionado }}/{{ anoSelecionado }}</h3>
+        <!-- LADO DIREITO: Gráfico ngx-charts -->
+        <div style="flex: 2; border: 1px solid #ccc; border-radius: 8px; padding: 15px;">
+            @if (!medidorSelecionado) {
+            <div style="text-align: center; color: #666; margin-top: 50px;">
+                Selecione um medidor na lista ao lado para visualizar os gráficos.
+            </div>
+            } @else {
+            <div>
+                <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Consumo: {{ medidorSelecionado.identificador }}</span>
+                    @if (nivelAtual !== 'ANO') {
+                    <button (click)="voltarGrafico()" style="padding: 5px 10px; cursor: pointer;">
+                        &larr; Voltar Nível
+                    </button>
+                    }
+                </h3>
+                <p style="font-size: 14px; color: #666;">
+                    Exibindo por: <strong>{{ nivelAtual }}</strong> (Clique em uma barra para detalhar)
+                </p>
 
-<ngx-charts-bar-vertical [results]="dadosDia">
-</ngx-charts-bar-vertical>
+                <ngx-charts-bar-vertical [view]="view" [results]="dadosGrafico" [xAxis]="showXAxis" [yAxis]="showYAxis"
+                    [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+                </ngx-charts-bar-vertical>
+            </div>
+            }
+        </div>
 
-}
+    </div>
+</div>

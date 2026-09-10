@@ -3,12 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LeituraEntity } from './leitura.entity';
 import { MedidorEntity } from '../medidores/medidor.entity';
-
-export class CreateLeituraDto {
-  medidorId: string;
-  dataHora?: string | Date;
-  valor: number;
-}
+import { CreateLeituraDto } from './dto/create-leitura.dto';
 
 @Injectable()
 export class LeiturasService {
@@ -17,12 +12,12 @@ export class LeiturasService {
     private leituraRepo: Repository<LeituraEntity>,
     @InjectRepository(MedidorEntity)
     private medidorRepo: Repository<MedidorEntity>,
-  ) {}
+  ) { }
 
-  async create(data: CreateLeituraDto) {
-    const medidor = await this.medidorRepo.findOne({ where: { id: data.medidorId } });
+  async create(medidorId: string, data: CreateLeituraDto) {
+    const medidor = await this.medidorRepo.findOne({ where: { id: medidorId } });
     if (!medidor) {
-      throw new NotFoundException(`Medidor com ID ${data.medidorId} não encontrado`);
+      throw new NotFoundException(`Medidor com ID ${medidorId} não encontrado`);
     }
 
     const leitura = this.leituraRepo.create({

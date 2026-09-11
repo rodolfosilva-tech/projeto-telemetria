@@ -1,4 +1,4 @@
-<div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+<div style="padding: 20px; max-width: 600px; margin: 0 auto;">
     <h2>Cadastros Básicos</h2>
 
     <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
@@ -24,7 +24,7 @@
                 <label style="display: block; margin-bottom: 5px;">Vincular ao Imóvel:</label>
                 <select formControlName="imovelId" style="width: 100%; padding: 8px;">
                     <option value="" disabled selected>Selecione...</option>
-                    <option *ngFor="let imovel of imoveis" [value]="imovel.id">{{ imovel.nome }}</option>
+                    <option *ngFor="let imovel of imoveis()" [value]="imovel.id">{{ imovel.nome }}</option>
                 </select>
             </div>
             <div style="margin-bottom: 15px;">

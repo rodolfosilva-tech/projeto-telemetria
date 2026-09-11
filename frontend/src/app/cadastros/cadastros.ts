@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TelemetriaService } from '../core/telemetria.service';
@@ -12,7 +12,7 @@ import { TelemetriaService } from '../core/telemetria.service';
 export class CadastrosComponent implements OnInit {
   imovelForm: FormGroup;
   medidorForm: FormGroup;
-  imoveis: any[] = [];
+  imoveis = signal<any[]>([]);
 
   constructor(private fb: FormBuilder, private telemetriaService: TelemetriaService) {
     this.imovelForm = this.fb.group({
@@ -33,7 +33,7 @@ export class CadastrosComponent implements OnInit {
 
   carregarImoveis() {
     this.telemetriaService.listarImoveis().subscribe(res => {
-      this.imoveis = res;
+      this.imoveis.set(res || []);
     });
   }
 

@@ -1,9 +1,12 @@
 <div style="padding: 20px; max-width: 1000px; margin: 0 auto;">
-    <h2>Dashboard de Telemetria</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Dashboard de Telemetria</h2>
+        <button (click)="logout()" style="padding: 6px 14px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Sair</button>
+    </div>
 
     <div style="margin-bottom: 20px;">
-        <a href="/cadastros" style="margin-right: 15px; color: #0056b3;">+ Cadastrar Imóveis/Medidores</a>
-        <a href="/leituras" style="color: #0056b3;">+ Lançar Leituras</a>
+        <a routerLink="/cadastros" style="margin-right: 15px; color: #0056b3; text-decoration: underline; cursor: pointer;">+ Cadastrar Imóveis/Medidores</a>
+        <a routerLink="/leituras" style="color: #0056b3; text-decoration: underline; cursor: pointer;">+ Lançar Leituras</a>
     </div>
 
     <div style="display: flex; gap: 20px;">
@@ -19,7 +22,6 @@
                     <strong>{{ imovel.nome }}</strong>
 
                     <ul style="margin-top: 5px; padding-left: 20px;">
-                        <!-- Itera direto no array de medidores do próprio imóvel -->
                         @for (medidor of imovel.medidores; track medidor.id) {
                         <li (click)="selecionarMedidor(medidor)"
                             [style.fontWeight]="medidorSelecionado()?.id === medidor.id ? 'bold' : 'normal'"
@@ -38,46 +40,80 @@
             </ul>
         </div>
 
-        <!-- LADO DIREITO: Gráfico ngx-charts -->
+        <!-- LADO DIREITO: Gráficos ngx-charts -->
         <div style="flex: 2; border: 1px solid #ccc; border-radius: 8px; padding: 15px; min-height: 400px;">
+
             @if (!medidorSelecionado()) {
             <div style="text-align: center; color: #666; margin-top: 50px;">
                 Selecione um medidor na lista ao lado para visualizar os gráficos.
             </div>
             } @else {
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <!-- Cabeçalho do Lado Direito -->
+                <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee;">
                     <h3 style="margin: 0;">
-                        <span>Consumo: {{ medidorSelecionado()?.identificador }} ({{ medidorSelecionado()?.tipo }})</span>
+                        <span>Consumo: {{ medidorSelecionado()?.identificador }} ({{ medidorSelecionado()?.tipo
+                            }})</span>
                     </h3>
-                    @if (nivelAtual() !== 'ANO') {
-                    <button (click)="voltarGrafico()"
-                        style="padding: 6px 14px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 4px; font-weight: bold;">
-                        &larr; Voltar Nível
-                    </button>
-                    }
+                    <p style="font-size: 14px; color: #666; margin-top: 5px;">
+                        Clique em uma barra do <strong>Ano</strong> para carregar os meses, e no <strong>Mês</strong>
+                        para carregar os dias.
+                    </p>
                 </div>
-                <p style="font-size: 14px; color: #666; margin-top: 0;">
-                    Exibindo por: <strong>{{ nivelAtual() }}</strong>
-                    @if (!nivelAtual().startsWith('DIA')) {
-                    <span> (Clique em uma barra para detalhar)</span>
-                    }
-                </p>
 
-                @if (carregandoGrafico()) {
-                <div style="text-align: center; color: #666; padding: 50px 0;">
-                    Carregando dados...
+                <!-- GRÁFICO 1: ANOS -->
+                <div style="margin-bottom: 30px;">
+                    <h4 style="margin: 0 0 10px 0; color: #444;">Consumo Anual</h4>
+
+                    @if (carregandoAno()) {
+                    <div style="text-align: center; color: #666; padding: 30px 0;">Carregando anos...</div>
+                    } @else if (dadosAno().length === 0) {
+                    <div style="text-align: center; color: #999; padding: 30px 0;">Nenhum dado anual encontrado.</div>
+                    } @else {
+                    <ngx-charts-bar-vertical [view]="view" [results]="dadosAno()" [xAxis]="showXAxis"
+                        [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                        [showYAxisLabel]="showYAxisLabel" xAxisLabel="Ano" [yAxisLabel]="yAxisLabel"
+                        (select)="onSelectAno($event)">
+                    </ngx-charts-bar-vertical>
+                    }
                 </div>
-                } @else if (dadosGrafico().length === 0) {
-                <div style="text-align: center; color: #999; padding: 50px 0;">
-                    Nenhum dado de consumo encontrado para este período.
+
+                <!-- GRÁFICO 2: MESES -->
+                @if (dadosMes().length > 0 || carregandoMes()) {
+                <div style="margin-bottom: 30px;">
+                    <hr style="border: 0; border-top: 1px dashed #ccc; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #444;">Consumo Mensal (Ano: {{ anoSelecionado }})</h4>
+
+                    @if (carregandoMes()) {
+                    <div style="text-align: center; color: #666; padding: 30px 0;">Carregando meses...</div>
+                    } @else {
+                    <ngx-charts-bar-vertical [view]="view" [results]="dadosMes()" [xAxis]="showXAxis"
+                        [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                        [showYAxisLabel]="showYAxisLabel" xAxisLabel="Mês" [yAxisLabel]="yAxisLabel"
+                        (select)="onSelectMes($event)">
+                    </ngx-charts-bar-vertical>
+                    }
                 </div>
-                } @else {
-                <ngx-charts-bar-vertical [view]="view" [results]="dadosGrafico()" [xAxis]="showXAxis" [yAxis]="showYAxis"
-                    [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel"
-                    [xAxisLabel]="xAxisLabel()" [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
-                </ngx-charts-bar-vertical>
                 }
+
+                <!-- GRÁFICO 3: DIAS -->
+                @if (dadosDia().length > 0 || carregandoDia()) {
+                <div>
+                    <hr style="border: 0; border-top: 1px dashed #ccc; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #444;">Consumo Diário (Mês: {{ mesSelecionado }}/{{
+                        anoSelecionado }})</h4>
+
+                    @if (carregandoDia()) {
+                    <div style="text-align: center; color: #666; padding: 30px 0;">Carregando dias...</div>
+                    } @else {
+                    <ngx-charts-bar-vertical [view]="view" [results]="dadosDia()" [xAxis]="showXAxis"
+                        [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                        [showYAxisLabel]="showYAxisLabel" xAxisLabel="Dia" [yAxisLabel]="yAxisLabel">
+                    </ngx-charts-bar-vertical>
+                    }
+                </div>
+                }
+
             </div>
             }
         </div>

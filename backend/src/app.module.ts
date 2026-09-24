@@ -9,9 +9,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImovelEntity } from './imoveis/imovel.entity';
 import { MedidorEntity } from './medidores/medidor.entity';
 import { LeituraEntity } from './leituras/leitura.entity';
+import { AuthModule } from './auth/auth.module';
+import { UsuarioEntity } from './auth/usuario.entity';
 
 @Module({
   imports: [
+    AuthModule,
     ImoveisModule,
     MedidoresModule,
     LeiturasModule,
@@ -23,7 +26,7 @@ import { LeituraEntity } from './leituras/leitura.entity';
       username: process.env.DB_USER || 'root',
       password: process.env.DB_PASS ?? '',
       database: process.env.DB_NAME || 'telemetria',
-      entities: [ImovelEntity, MedidorEntity, LeituraEntity],
+      entities: [ImovelEntity, MedidorEntity, LeituraEntity, UsuarioEntity],
       synchronize: true,
     }),
   ],

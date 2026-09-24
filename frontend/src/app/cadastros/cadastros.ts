@@ -1,12 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { TelemetriaService } from '../core/telemetria.service';
 
 @Component({
   selector: 'app-cadastros',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './cadastros.html'
 })
 export class CadastrosComponent implements OnInit {
